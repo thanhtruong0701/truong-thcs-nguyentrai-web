@@ -38,16 +38,14 @@ interface FileUpload {
 
 // Map slug to file category
 const SLUG_TO_CATEGORY: Record<string, string> = {
+  'bai-giang': 'tai-lieu',
+  'giao-an': 'giao-an',
   'de-thi': 'de-thi',
   'tu-lieu': 'tai-lieu',
-  'giao-an': 'tai-lieu',
-  'sang-kien': 'tai-lieu',
-  'phan-cong': 'phan-cong',
-  'quy-che': 'quy-che',
-  'bao-cao': 'bao-cao',
-  'tai-nguyen': 'general',
-  'van-ban': 'van-ban',
-  'phap-che': 'quy-che',
+  'sang-kien': 'sang-kien',
+  'toan-hoc-vui': 'toan-hoc-vui',
+  'tin-giao-duc': 'tin-giao-duc',
+  'bai-viet': 'general',
 }
 
 function getFileIcon(type: string) {
