@@ -19,6 +19,9 @@ interface Page {
   title: string
   content: string
   imageUrl?: string | null
+  fileUrl?: string | null
+  fileName?: string | null
+  fileType?: string | null
   isPublished: boolean
   createdAt: Date
 }
@@ -273,6 +276,19 @@ export default function CatchAllPage() {
                 <div className="prose prose-base max-w-none text-gray-700 whitespace-pre-wrap">
                   {page.content}
                 </div>
+                {page.fileUrl && (
+                  <div className="mt-4 pt-4 border-t border-gray-100">
+                    <a
+                      href={page.fileUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-2 px-4 py-2 bg-blue-50 text-blue-700 rounded-lg hover:bg-blue-100 transition text-sm font-medium"
+                    >
+                      <Download className="w-4 h-4" />
+                      Tải file đính kèm: {page.fileName || 'File'}
+                    </a>
+                  </div>
+                )}
               </div>
             ))}
           </div>
