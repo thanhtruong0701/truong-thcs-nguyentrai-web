@@ -46,6 +46,7 @@ export default function TakeQuizPage() {
   const [submitting, setSubmitting] = useState(false)
   const [result, setResult] = useState<QuizResult | null>(null)
   const [currentQuestion, setCurrentQuestion] = useState(0)
+  const [attemptCount, setAttemptCount] = useState(0)
 
   useEffect(() => {
     if (params.id) {
@@ -56,6 +57,7 @@ export default function TakeQuizPage() {
         .then(([quizData, attempts]) => {
           if (quizData) {
             setQuiz(quizData)
+            setAttemptCount(attempts?.length || 0)
             if (quizData.timeLimit) {
               setTimeLeft(quizData.timeLimit * 60)
             }
@@ -278,6 +280,10 @@ export default function TakeQuizPage() {
 
   // Start screen
   if (!started) {
+    const maxAttempts = quiz.maxAttempts || 1
+    const attemptsLeft = maxAttempts - attemptCount
+    const hasAttemptsLeft = attemptsLeft > 0
+
     return (
       <div className="min-h-screen bg-gray-50">
         <header className="bg-gradient-to-r from-red-900 via-red-800 to-red-900 text-white">
@@ -304,14 +310,28 @@ export default function TakeQuizPage() {
             <div className="flex items-center justify-center gap-6 text-sm text-gray-500 mb-6">
               <span>{quiz.questions.length} câu hỏi</span>
               {quiz.timeLimit && <span>Thời gian: {quiz.timeLimit} phút</span>}
-              <span>Số lần tối đa: {quiz.maxAttempts}</span>
+              <span>Đã làm: {attemptCount}/{maxAttempts} lần</span>
             </div>
-            <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-6 text-sm text-yellow-700">
-              Lưu ý: Sau khi bắt đầu, bạn cần hoàn thành bài kiểm tra trong thời gian quy định.
+
+            {!hasAttemptsLeft ? (
+              <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-6 text-sm text-red-700">
+                Bạn đã hết số lần làm bài cho phép ({maxAttempts} lần).
+              </div>
+            ) : (
+              <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-6 text-sm text-yellow-700">
+                Lưu ý: Sau khi bắt đầu, bạn cần hoàn thành bài kiểm tra trong thời gian quy định.
+                <br />Số lần còn lại: {attemptsLeft}
+              </div>
+            )}
+
+            <div className="flex gap-3 justify-center">
+              <Button onClick={handleStart} disabled={!hasAttemptsLeft} className="bg-purple-600 hover:bg-purple-700 px-8">
+                Bắt đầu làm bài
+              </Button>
+              <Link href="/quizzes">
+                <Button variant="outline">Quay lại</Button>
+              </Link>
             </div>
-            <Button onClick={handleStart} className="bg-purple-600 hover:bg-purple-700 px-8">
-              Bắt đầu làm bài
-            </Button>
           </div>
         </div>
       </div>

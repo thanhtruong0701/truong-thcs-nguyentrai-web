@@ -45,6 +45,9 @@ const SLUG_TO_CATEGORY: Record<string, string> = {
   'phan-cong': 'phan-cong',
   'quy-che': 'quy-che',
   'bao-cao': 'bao-cao',
+  'tai-nguyen': 'general',
+  'van-ban': 'van-ban',
+  'phap-che': 'quy-che',
 }
 
 function getFileIcon(type: string) {

@@ -16,7 +16,7 @@ export async function getPublishedFilesByCategory(category: string) {
   return db
     .select()
     .from(fileUploads)
-    .where(eq(fileUploads.isPublished, true))
+    .where(sql`${fileUploads.isPublished} = true AND ${fileUploads.category} = ${category}`)
     .orderBy(desc(fileUploads.createdAt))
 }
 
