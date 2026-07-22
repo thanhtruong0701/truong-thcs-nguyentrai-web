@@ -19,11 +19,16 @@ interface Page {
   title: string
   content: string
   imageUrl?: string | null
-  fileUrl?: string | null
-  fileName?: string | null
-  fileType?: string | null
+  files?: string | null
   isPublished: boolean
   createdAt: Date
+}
+
+interface Attachment {
+  url: string
+  name: string
+  type: string
+  isImage: boolean
 }
 
 interface FileUpload {
@@ -255,42 +260,51 @@ export default function CatchAllPage() {
           </div>
         ) : pagesList.length > 0 ? (
           <div className="space-y-4">
-            {pagesList.map(page => (
-              <div key={page.id} className="bg-white rounded-lg border border-gray-200 p-6 hover:shadow-sm transition-all">
-                {page.imageUrl && (
-                  <img
-                    src={page.imageUrl}
-                    alt={page.title}
-                    className="w-full h-48 object-cover rounded-lg mb-4"
-                  />
-                )}
-                <h2 className="text-xl font-bold text-gray-900 mb-2">{page.title}</h2>
-                <div className="flex items-center gap-2 text-sm text-gray-400 mb-3">
-                  <Calendar className="w-4 h-4" />
-                  {new Date(page.createdAt).toLocaleDateString('vi-VN', {
-                    day: 'numeric',
-                    month: 'long',
-                    year: 'numeric',
-                  })}
-                </div>
-                <div className="prose prose-base max-w-none text-gray-700 whitespace-pre-wrap">
-                  {page.content}
-                </div>
-                {page.fileUrl && (
-                  <div className="mt-4 pt-4 border-t border-gray-100">
-                    <a
-                      href={page.fileUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center gap-2 px-4 py-2 bg-blue-50 text-blue-700 rounded-lg hover:bg-blue-100 transition text-sm font-medium"
-                    >
-                      <Download className="w-4 h-4" />
-                      Tải file đính kèm: {page.fileName || 'File'}
-                    </a>
+            {pagesList.map(page => {
+              let attachments: Attachment[] = []
+              try { if (page.files) attachments = JSON.parse(page.files) } catch {}
+              const images = attachments.filter(a => a.isImage)
+              const files = attachments.filter(a => !a.isImage)
+
+              return (
+                <div key={page.id} className="bg-white rounded-lg border border-gray-200 p-6 hover:shadow-sm transition-all">
+                  {page.imageUrl && (
+                    <img src={page.imageUrl} alt={page.title} className="w-full h-48 object-cover rounded-lg mb-4" />
+                  )}
+                  <h2 className="text-xl font-bold text-gray-900 mb-2">{page.title}</h2>
+                  <div className="flex items-center gap-2 text-sm text-gray-400 mb-3">
+                    <Calendar className="w-4 h-4" />
+                    {new Date(page.createdAt).toLocaleDateString('vi-VN', { day: 'numeric', month: 'long', year: 'numeric' })}
                   </div>
-                )}
-              </div>
-            ))}
+                  <div className="prose prose-base max-w-none text-gray-700 whitespace-pre-wrap">{page.content}</div>
+
+                  {/* Hiển thị ảnh đính kèm */}
+                  {images.length > 0 && (
+                    <div className="mt-4 grid grid-cols-2 md:grid-cols-3 gap-3">
+                      {images.map((img, i) => (
+                        <a key={i} href={img.url} target="_blank" rel="noopener noreferrer">
+                          <img src={img.url} alt={img.name} className="w-full h-32 object-cover rounded-lg hover:opacity-80 transition" />
+                        </a>
+                      ))}
+                    </div>
+                  )}
+
+                  {/* Hiển thị file đính kèm */}
+                  {files.length > 0 && (
+                    <div className="mt-4 pt-4 border-t border-gray-100 space-y-2">
+                      <p className="text-sm font-medium text-gray-600">File đính kèm:</p>
+                      {files.map((f, i) => (
+                        <a key={i} href={f.url} target="_blank" rel="noopener noreferrer"
+                          className="flex items-center gap-2 px-3 py-2 bg-blue-50 text-blue-700 rounded-lg hover:bg-blue-100 transition text-sm">
+                          <Download className="w-4 h-4" />
+                          {f.name}
+                        </a>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              )
+            })}
           </div>
         ) : null}
       </div>
