@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react'
 import Link from 'next/link'
-import { BookOpen, ChevronRight, Calendar, Eye } from 'lucide-react'
+import { BookOpen, ChevronRight, Calendar, Eye, FileText, Download } from 'lucide-react'
 import { getPublishedCourses, getCourseById } from '@/app/actions/courses'
 import { Modal } from '@/components/modal'
 
@@ -129,41 +129,119 @@ export default function CoursesPage() {
         title={selectedCourse?.title}
       >
         {selectedCourse && (
-          <div className="space-y-4">
-            <div className="flex items-center gap-4">
-              <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
-                <BookOpen className="w-6 h-6 text-blue-600" />
-              </div>
-              <div>
-                <h3 className="font-semibold text-gray-900">{selectedCourse.title}</h3>
-                {selectedCourse.gradeLevel && (
-                  <span className="text-sm text-gray-500">Lớp {selectedCourse.gradeLevel}</span>
-                )}
-              </div>
-            </div>
-            {selectedCourse.description && (
-              <div className="prose prose-sm max-w-none text-gray-700 leading-relaxed">
-                {selectedCourse.description}
-              </div>
-            )}
-            <div className="flex items-center gap-4 text-sm text-gray-500">
-              <span className="flex items-center gap-1">
-                <Calendar className="w-4 h-4" />
-                Ngày tạo: {new Date(selectedCourse.createdAt).toLocaleDateString('vi-VN')}
-              </span>
-            </div>
-            <div className="pt-4 border-t border-gray-100">
-              <Link
-                href={`/courses/${selectedCourse.id}`}
-                className="inline-flex items-center gap-2 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors duration-200"
-              >
-                <Eye className="w-4 h-4" />
-                Xem khóa học
-              </Link>
-            </div>
-          </div>
+          <CourseModalContent courseId={selectedCourse.id} selectedCourse={selectedCourse} />
         )}
       </Modal>
+    </div>
+  )
+}
+
+function CourseModalContent({ courseId, selectedCourse }: { courseId: string; selectedCourse: Course }) {
+  const [lessons, setLessons] = useState<any[]>([])
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    getCourseById(courseId)
+      .then(async (c) => {
+        const { getLessonsByCourse, getMaterialsByLesson } = await import('@/app/actions/courses')
+        const lessonList = await getLessonsByCourse(courseId)
+        const lessonsWithMaterials = await Promise.all(
+          lessonList.map(async (l: any) => {
+            const mats = await getMaterialsByLesson(l.id)
+            return { ...l, materials: mats }
+          })
+        )
+        setLessons(lessonsWithMaterials)
+      })
+      .catch(console.error)
+      .finally(() => setLoading(false))
+  }, [courseId])
+
+  return (
+    <div className="space-y-4 max-h-[70vh] overflow-y-auto pr-1">
+      <div className="flex items-center gap-4">
+        <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center flex-shrink-0">
+          <BookOpen className="w-6 h-6 text-blue-600" />
+        </div>
+        <div>
+          <h3 className="font-semibold text-gray-900">{selectedCourse.title}</h3>
+          {selectedCourse.gradeLevel && (
+            <span className="text-xs bg-blue-50 text-blue-700 px-2 py-0.5 rounded font-medium">Lớp {selectedCourse.gradeLevel}</span>
+          )}
+        </div>
+      </div>
+
+      {selectedCourse.description && (
+        <div className="prose prose-sm max-w-none text-gray-700 leading-relaxed bg-gray-50 p-3 rounded-lg border border-gray-100">
+          {selectedCourse.description}
+        </div>
+      )}
+
+      {/* Danh sách Bài giảng & File đính kèm */}
+      <div className="space-y-3 pt-2">
+        <h4 className="font-semibold text-sm text-gray-800 flex items-center gap-2">
+          <FileText className="w-4 h-4 text-blue-600" />
+          Danh sách bài giảng & Tài liệu ({lessons.length})
+        </h4>
+
+        {loading ? (
+          <div className="space-y-2">
+            {[1, 2].map(i => <div key={i} className="h-16 bg-gray-100 rounded-lg animate-pulse" />)}
+          </div>
+        ) : lessons.length === 0 ? (
+          <p className="text-sm text-gray-400 italic">Chưa có bài giảng nào trong khóa học này.</p>
+        ) : (
+          <div className="space-y-3">
+            {lessons.map((lesson, idx) => (
+              <div key={lesson.id} className="border border-gray-200 rounded-lg p-3 bg-white space-y-2">
+                <div className="flex items-start gap-2">
+                  <span className="w-6 h-6 bg-blue-100 text-blue-700 font-bold rounded-full text-xs flex items-center justify-center flex-shrink-0 mt-0.5">
+                    {idx + 1}
+                  </span>
+                  <div>
+                    <h5 className="font-medium text-sm text-gray-900">{lesson.title}</h5>
+                    {lesson.content && <p className="text-xs text-gray-500 line-clamp-2 mt-0.5">{lesson.content}</p>}
+                  </div>
+                </div>
+
+                {/* Tài liệu của bài học */}
+                {lesson.materials && lesson.materials.length > 0 && (
+                  <div className="pl-8 space-y-1.5 pt-1">
+                    <p className="text-xs font-semibold text-gray-600">Tài liệu đính kèm:</p>
+                    {lesson.materials.map((mat: any) => (
+                      <a
+                        key={mat.id}
+                        href={mat.fileUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center gap-2 p-2 bg-blue-50 text-blue-700 rounded-md hover:bg-blue-100 transition text-xs font-medium border border-blue-100"
+                      >
+                        <Download className="w-3.5 h-3.5 flex-shrink-0" />
+                        <span className="truncate flex-1">{mat.title}</span>
+                        <span className="bg-blue-600 text-white px-2 py-0.5 rounded text-[10px] flex-shrink-0">Tải về</span>
+                      </a>
+                    ))}
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+
+      <div className="flex items-center justify-between pt-4 border-t border-gray-100 text-xs text-gray-500">
+        <span className="flex items-center gap-1">
+          <Calendar className="w-3.5 h-3.5" />
+          Ngày tạo: {new Date(selectedCourse.createdAt).toLocaleDateString('vi-VN')}
+        </span>
+        <Link
+          href={`/courses/${selectedCourse.id}`}
+          className="inline-flex items-center gap-1 bg-blue-600 text-white px-3 py-1.5 rounded-lg font-medium hover:bg-blue-700 transition"
+        >
+          <Eye className="w-3.5 h-3.5" />
+          Trang chi tiết
+        </Link>
+      </div>
     </div>
   )
 }
