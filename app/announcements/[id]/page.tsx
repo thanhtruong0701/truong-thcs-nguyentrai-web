@@ -6,6 +6,12 @@ import Link from 'next/link'
 import { ArrowLeft, Clock, ChevronRight, Download } from 'lucide-react'
 import { getAnnouncementById } from '@/app/actions/announcements'
 
+interface AttachmentFile {
+  url: string
+  name: string
+  type: string
+}
+
 interface Announcement {
   id: string
   title: string
@@ -14,6 +20,8 @@ interface Announcement {
   fileUrl?: string | null
   fileName?: string | null
   fileType?: string | null
+  images?: string | null
+  files?: string | null
   isPinned: boolean
   createdAt: Date
 }
@@ -103,6 +111,24 @@ export default function AnnouncementDetailPage() {
     )
   }
 
+  let imagesList: string[] = []
+  if (announcement.images) {
+    try { imagesList = JSON.parse(announcement.images) } catch {}
+  } else if (announcement.imageUrl) {
+    imagesList = [announcement.imageUrl]
+  }
+
+  let filesList: AttachmentFile[] = []
+  if (announcement.files) {
+    try { filesList = JSON.parse(announcement.files) } catch {}
+  } else if (announcement.fileUrl) {
+    filesList = [{
+      url: announcement.fileUrl,
+      name: announcement.fileName || 'Tải file đính kèm',
+      type: announcement.fileType || 'File đính kèm'
+    }]
+  }
+
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
@@ -172,38 +198,55 @@ export default function AnnouncementDetailPage() {
             </div>
           </div>
 
-          {/* Image - smaller, professional */}
-          {announcement.imageUrl && (
-            <div className="px-6">
-              <img
-                src={announcement.imageUrl}
-                alt={announcement.title}
-                className="w-full h-48 md:h-64 max-h-[400px] object-cover rounded-lg"
-              />
+          {/* Multiple Images Gallery */}
+          {imagesList.length > 0 && (
+            <div className="px-6 py-2 space-y-3">
+              {imagesList.length === 1 ? (
+                <img
+                  src={imagesList[0]}
+                  alt={announcement.title}
+                  className="w-full h-48 md:h-64 max-h-[400px] object-cover rounded-lg"
+                />
+              ) : (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                  {imagesList.map((imgUrl, i) => (
+                    <a key={i} href={imgUrl} target="_blank" rel="noopener noreferrer" className="block overflow-hidden rounded-lg border border-gray-200 hover:opacity-90 transition">
+                      <img src={imgUrl} alt={`Ảnh ${i + 1}`} className="w-full h-48 object-cover" />
+                    </a>
+                  ))}
+                </div>
+              )}
             </div>
           )}
 
-          {/* Attached File */}
-          {announcement.fileUrl && (
-            <div className="px-6 py-3">
-              <a
-                href={announcement.fileUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-3 p-4 bg-blue-50 rounded-lg border border-blue-200 hover:bg-blue-100 transition-colors"
-              >
-                <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
-                  <Download className="w-5 h-5 text-blue-600" />
-                </div>
-                <div>
-                  <p className="text-sm font-medium text-blue-900">
-                    {announcement.fileName || 'Tải file đính kèm'}
-                  </p>
-                  <p className="text-xs text-blue-600">
-                    {announcement.fileType || 'File đính kèm'}
-                  </p>
-                </div>
-              </a>
+          {/* Attached Files List */}
+          {filesList.length > 0 && (
+            <div className="px-6 py-3 space-y-2">
+              <p className="text-sm font-semibold text-gray-800">Tài liệu / File đính kèm ({filesList.length}):</p>
+              <div className="space-y-2">
+                {filesList.map((f, i) => (
+                  <a
+                    key={i}
+                    href={f.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-3 p-3 bg-blue-50 rounded-lg border border-blue-200 hover:bg-blue-100 transition-colors"
+                  >
+                    <div className="w-9 h-9 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
+                      <Download className="w-4 h-4 text-blue-600" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-medium text-blue-900 truncate">
+                        {f.name || 'Tải file đính kèm'}
+                      </p>
+                      <p className="text-xs text-blue-600">
+                        {f.type || 'File đính kèm'}
+                      </p>
+                    </div>
+                    <span className="text-xs bg-blue-600 text-white px-2.5 py-1 rounded font-medium flex-shrink-0">Tải về</span>
+                  </a>
+                ))}
+              </div>
             </div>
           )}
 
