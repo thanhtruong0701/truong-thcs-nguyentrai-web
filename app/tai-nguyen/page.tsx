@@ -15,6 +15,7 @@ interface FileUpload {
   fileSize?: number | null
   category?: string | null
   downloadCount: number
+  allowDownload: boolean
   createdAt: Date
 }
 
@@ -166,13 +167,19 @@ export default function TaiNguyenPage() {
                       <p className="text-sm text-gray-500 mt-1 line-clamp-1">{file.description}</p>
                     )}
                   </div>
-                  <button
-                    onClick={() => handleDownload(file)}
-                    className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors flex-shrink-0"
-                  >
-                    <Download className="w-4 h-4" />
-                    Tải về
-                  </button>
+                  {file.allowDownload !== false ? (
+                    <button
+                      onClick={() => handleDownload(file)}
+                      className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors flex-shrink-0"
+                    >
+                      <Download className="w-4 h-4" />
+                      Tải về
+                    </button>
+                  ) : (
+                    <span className="flex items-center gap-2 bg-gray-100 text-gray-400 px-4 py-2 rounded-lg text-sm font-medium flex-shrink-0 cursor-not-allowed">
+                      🔒 Xem thôi
+                    </span>
+                  )}
                 </div>
               </div>
             ))}
