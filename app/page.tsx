@@ -32,6 +32,9 @@ interface MenuItem {
   id: string
   label: string
   link: string
+  icon: string | null
+  menuType: string | null
+  parentId: string | null
   orderIndex: number
   isVisible: boolean
 }
@@ -44,21 +47,6 @@ function adjustColor(hex: string, amount: number): string {
   return `#${(1 << 24 | r << 16 | g << 8 | b).toString(16).slice(1)}`
 }
 
-const categoryIcons: Record<string, string> = {
-  '/about': '📖',
-  '/phap-che': '⚖️',
-  '/#announcements': '📰',
-  '/van-ban': '📄',
-  '/video': '🎬',
-  '/hoc-hanh-phuc': '😊',
-  '/chuyen-mon': '📚',
-  '/doan-the': '🤝',
-  '/tkb': '📅',
-  '/courses': '💡',
-  '/tai-nguyen': '📁',
-  '/quizzes': '📝',
-  '/contact': '📞',
-}
 
 export default function HomePage() {
   const [announcements, setAnnouncements] = useState<Announcement[]>([])
@@ -67,6 +55,16 @@ export default function HomePage() {
   const [loading, setLoading] = useState(true)
   const [animatedItems, setAnimatedItems] = useState<Set<string>>(new Set())
   const [schoolSettings, setSchoolSettings] = useState<any>(null)
+  const [expandedMenus, setExpandedMenus] = useState<Set<string>>(new Set())
+
+  function toggleMenu(id: string) {
+    setExpandedMenus(prev => {
+      const next = new Set(prev)
+      if (next.has(id)) next.delete(id)
+      else next.add(id)
+      return next
+    })
+  }
 
   useEffect(() => {
     Promise.all([getAnnouncements(), getPublishedCourses(), getVisibleMenuItems(), getSettings()])
@@ -107,6 +105,10 @@ export default function HomePage() {
   const pinnedAnnouncements = announcements.filter(a => a.isPinned)
   const recentAnnouncements = announcements.slice(0, 8)
   const latestCourses = courses.slice(0, 6)
+
+  // Build menu tree
+  const rootMenuItems = menuItemsList.filter(i => !i.parentId)
+  const getSubItems = (parentId: string) => menuItemsList.filter(i => i.parentId === parentId)
 
   const now = new Date()
   const dayNames = ['Chủ nhật', 'Thứ Hai', 'Thứ Ba', 'Thứ Tư', 'Thứ Năm', 'Thứ Sáu', 'Thứ Bảy']
@@ -165,7 +167,7 @@ export default function HomePage() {
         </div>
       </header>
 
-      {/* Navigation */}
+      {/* Navigation - chỉ hiện menu root, không dropdown */}
       <nav
         className="border-t shadow-md animate-slideDown"
         style={{
@@ -175,13 +177,14 @@ export default function HomePage() {
       >
         <div className="max-w-7xl mx-auto px-4">
           <div className="flex items-center overflow-x-auto">
-            {menuItemsList.map((item, i) => (
+            {rootMenuItems.map((item, i) => (
               <Link
                 key={item.id}
-                href={item.link}
-                className="px-4 py-3 text-sm font-medium text-white/90 hover:bg-blue-700 hover:text-white transition-all duration-200 whitespace-nowrap border-r border-blue-500/50 last:border-r-0 hover:scale-105"
+                href={item.menuType === 'category' ? '#' : item.link}
+                className="flex items-center gap-1.5 px-4 py-3 text-sm font-medium text-white/90 hover:bg-white/10 hover:text-white transition-all duration-200 whitespace-nowrap border-r border-white/20 last:border-r-0"
                 style={{ animationDelay: `${i * 50}ms` }}
               >
+                <span>{item.icon || '📄'}</span>
                 {item.label}
               </Link>
             ))}
@@ -199,20 +202,63 @@ export default function HomePage() {
                 <h3 className="font-bold text-sm uppercase tracking-wide">Danh mục</h3>
               </div>
               <nav className="divide-y divide-gray-100">
-                {menuItemsList.map((item, i) => (
-                  <Link
-                    key={item.id}
-                    href={item.link}
-                    className="block px-4 py-2.5 text-sm text-gray-700 hover:bg-blue-100 hover:text-blue-800 transition-all duration-200 flex items-center gap-2 group"
-                    style={{ animationDelay: `${i * 30}ms` }}
-                  >
-                    <span className="text-base group-hover:scale-125 transition-transform duration-200">
-                      {categoryIcons[item.link] || '📄'}
-                    </span>
-                    <ChevronRight className="w-3 h-3 text-gray-400 group-hover:translate-x-1 transition-transform duration-200" />
-                    {item.label}
-                  </Link>
-                ))}
+                {rootMenuItems.map((item, i) => {
+                  const children = getSubItems(item.id)
+                  const hasChildren = children.length > 0
+                  const isExpanded = expandedMenus.has(item.id)
+                  return (
+                    <div key={item.id}>
+                      {/* Root item - nếu có con thì click để toggle */}
+                      {hasChildren ? (
+                        <button
+                          onClick={() => toggleMenu(item.id)}
+                          className="w-full px-4 py-2.5 text-sm text-gray-700 hover:bg-blue-100 hover:text-blue-800 transition-all duration-200 flex items-center gap-2 group text-left"
+                        >
+                          <span className="text-base">{item.icon || '📄'}</span>
+                          <span className="flex-1">{item.label}</span>
+                          <svg
+                            className={`w-3 h-3 text-gray-400 transition-transform duration-200 ${isExpanded ? 'rotate-90' : ''}`}
+                            fill="none" viewBox="0 0 24 24" stroke="currentColor"
+                          >
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                          </svg>
+                        </button>
+                      ) : item.menuType === 'category' ? (
+                        <div className="px-4 py-2.5 text-sm font-semibold text-gray-500 bg-gray-50 flex items-center gap-2">
+                          <span className="text-base">{item.icon || '📄'}</span>
+                          {item.label}
+                        </div>
+                      ) : (
+                        <Link
+                          href={item.link}
+                          className="block px-4 py-2.5 text-sm text-gray-700 hover:bg-blue-100 hover:text-blue-800 transition-all duration-200 flex items-center gap-2 group"
+                        >
+                          <span className="text-base group-hover:scale-125 transition-transform duration-200">
+                            {item.icon || '📄'}
+                          </span>
+                          <ChevronRight className="w-3 h-3 text-gray-400 group-hover:translate-x-1 transition-transform duration-200" />
+                          {item.label}
+                        </Link>
+                      )}
+
+                      {/* Sub items - chỉ hiện khi expanded */}
+                      {hasChildren && isExpanded && (
+                        <div className="bg-gray-50 border-t border-gray-100">
+                          {children.map(child => (
+                            <Link
+                              key={child.id}
+                              href={child.link}
+                              className="flex items-center gap-2 pl-8 pr-4 py-2 text-sm text-gray-600 hover:bg-blue-50 hover:text-blue-700 transition-all duration-150 border-l-2 border-blue-300 ml-4"
+                            >
+                              <span className="text-sm">{child.icon || '📄'}</span>
+                              {child.label}
+                            </Link>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  )
+                })}
               </nav>
             </div>
 

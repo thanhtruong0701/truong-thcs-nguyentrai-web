@@ -29,6 +29,7 @@ interface Attachment {
   name: string
   type: string
   isImage: boolean
+  allowDownload?: boolean  // từ admin - có thể undefined với data cũ → mặc định cho tải
 }
 
 interface FileUpload {
@@ -41,6 +42,7 @@ interface FileUpload {
   fileSize?: number | null
   category?: string | null
   downloadCount: number
+  allowDownload: boolean
   createdAt: Date
 }
 
@@ -236,13 +238,19 @@ export default function CatchAllPage() {
                         <p className="text-sm text-gray-500 mt-1 line-clamp-1">{file.description}</p>
                       )}
                     </div>
-                    <button
-                      onClick={() => handleDownload(file)}
-                      className="flex items-center gap-2 bg-red-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-red-700 transition-colors flex-shrink-0"
-                    >
-                      <Download className="w-4 h-4" />
-                      Tải về
-                    </button>
+                    {file.allowDownload ? (
+                      <button
+                        onClick={() => handleDownload(file)}
+                        className="flex items-center gap-2 bg-red-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-red-700 transition-colors flex-shrink-0"
+                      >
+                        <Download className="w-4 h-4" />
+                        Tải về
+                      </button>
+                    ) : (
+                      <span className="flex items-center gap-2 bg-gray-100 text-gray-400 px-4 py-2 rounded-lg text-sm font-medium flex-shrink-0 cursor-not-allowed">
+                        🔒 Xem thôi
+                      </span>
+                    )}
                   </div>
                 </div>
               ))}
@@ -289,16 +297,22 @@ export default function CatchAllPage() {
                     </div>
                   )}
 
-                  {/* Hiển thị file đính kèm */}
+                  {/* Hiển thị file đính kèm - kiểm tra allowDownload */}
                   {files.length > 0 && (
                     <div className="mt-4 pt-4 border-t border-gray-100 space-y-2">
                       <p className="text-sm font-medium text-gray-600">File đính kèm:</p>
                       {files.map((f, i) => (
-                        <a key={i} href={f.url} target="_blank" rel="noopener noreferrer"
-                          className="flex items-center gap-2 px-3 py-2 bg-blue-50 text-blue-700 rounded-lg hover:bg-blue-100 transition text-sm">
-                          <Download className="w-4 h-4" />
-                          {f.name}
-                        </a>
+                        f.allowDownload !== false ? (
+                          <a key={i} href={f.url} target="_blank" rel="noopener noreferrer"
+                            className="flex items-center gap-2 px-3 py-2 bg-blue-50 text-blue-700 rounded-lg hover:bg-blue-100 transition text-sm">
+                            <Download className="w-4 h-4" />
+                            {f.name}
+                          </a>
+                        ) : (
+                          <div key={i} className="flex items-center gap-2 px-3 py-2 bg-gray-50 text-gray-400 rounded-lg text-sm cursor-not-allowed">
+                            🔒 {f.name} <span className="text-xs">(không cho tải)</span>
+                          </div>
+                        )
                       ))}
                     </div>
                   )}
