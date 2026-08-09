@@ -53,7 +53,7 @@ export default function AnnouncementDetailPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen">
         <SiteHeader />
         <div className="max-w-4xl mx-auto px-4 py-8">
           <div className="animate-pulse space-y-4">
@@ -73,7 +73,7 @@ export default function AnnouncementDetailPage() {
 
   if (error || !announcement) {
     return (
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen">
         <SiteHeader />
         <div className="max-w-4xl mx-auto px-4 py-8 text-center">
           <div className="bg-white rounded-lg border border-gray-200 p-12">
@@ -107,7 +107,7 @@ export default function AnnouncementDetailPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen">
       <SiteHeader />
 
       {/* Breadcrumb */}

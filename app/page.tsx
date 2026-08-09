@@ -129,7 +129,7 @@ export default function HomePage() {
   const dateStr = `${dayNames[now.getDay()]}, ngày ${now.getDate()}/${now.getMonth() + 1}/${now.getFullYear()}`
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen">
       <SiteHeader />
 
       {/* Main Content */}
@@ -226,7 +226,9 @@ export default function HomePage() {
             <div
               className="rounded-lg p-8 text-white mb-6 relative overflow-hidden group animate-fadeInUp hover:shadow-xl transition-shadow duration-300"
               style={{
-                background: `linear-gradient(to right, ${schoolSettings?.primaryColor || 'var(--primary)'}, ${schoolSettings?.primaryColor ? adjustColor(schoolSettings.primaryColor, -30) : 'var(--primary)'})`
+                background: schoolSettings?.heroImageUrl
+                  ? `linear-gradient(to right, rgba(0,0,0,0.65), rgba(0,0,0,0.4)), url('${schoolSettings.heroImageUrl}') center/cover no-repeat`
+                  : `linear-gradient(to right, ${schoolSettings?.primaryColor || 'var(--primary)'}, ${schoolSettings?.primaryColor ? adjustColor(schoolSettings.primaryColor, -30) : 'var(--primary)'})`
               }}
             >
               <div className="absolute inset-0 opacity-10">

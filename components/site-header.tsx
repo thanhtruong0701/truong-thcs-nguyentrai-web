@@ -97,8 +97,12 @@ export function SiteHeader() {
         <div className="max-w-7xl mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
             <Link href="/" className="flex items-center gap-4 group">
-              <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300">
-                <span className="font-bold text-xl" style={{ color: schoolSettings?.primaryColor || 'var(--primary)' }}>NT</span>
+              <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300 overflow-hidden">
+                {schoolSettings?.logoUrl ? (
+                  <img src={schoolSettings.logoUrl} alt="Logo" className="w-full h-full object-contain p-1" />
+                ) : (
+                  <span className="font-bold text-xl" style={{ color: schoolSettings?.primaryColor || 'var(--primary)' }}>NT</span>
+                )}
               </div>
               <div>
                 <p className="text-xs opacity-80 tracking-wider uppercase">Cổng thông tin điện tử</p>
