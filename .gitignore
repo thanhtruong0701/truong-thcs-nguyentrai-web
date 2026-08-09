@@ -87,3 +87,8 @@ next-env.d.ts
 
 # Mimocode
 .mimocode
+
+# Playwright test results
+test-results/
+playwright-report/
+

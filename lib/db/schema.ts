@@ -208,3 +208,18 @@ export const pages = pgTable('pages', {
   createdAt: timestamp('created_at').notNull().defaultNow(),
   updatedAt: timestamp('updated_at').notNull().defaultNow(),
 })
+
+// --- Contacts / Feedbacks ----------------------------------------------------
+
+export const contacts = pgTable('contacts', {
+  id: text('id').primaryKey(),
+  fullName: text('full_name').notNull(),
+  userType: text('user_type').notNull().default('parent'), // 'parent' | 'student' | 'other'
+  phone: text('phone'),
+  email: text('email'),
+  subject: text('subject').notNull(),
+  message: text('message').notNull(),
+  isRead: boolean('is_read').notNull().default(false),
+  responseNote: text('response_note'),
+  createdAt: timestamp('created_at').notNull().defaultNow(),
+})

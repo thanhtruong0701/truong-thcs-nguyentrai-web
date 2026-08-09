@@ -2,7 +2,8 @@
 
 import Link from 'next/link'
 import { useState, useEffect } from 'react'
-import { Search, Calendar, Phone, Mail, MapPin, ChevronRight, BookOpen } from 'lucide-react'
+import { SiteHeader } from '@/components/site-header'
+import { BookOpen, Phone, MapPin, Mail, Calendar, ChevronRight } from 'lucide-react'
 import { getAnnouncements } from '@/app/actions/announcements'
 import { getPublishedCourses } from '@/app/actions/courses'
 import { getVisibleMenuItems } from '@/app/actions/menus'
@@ -47,6 +48,19 @@ function adjustColor(hex: string, amount: number): string {
   return `#${(1 << 24 | r << 16 | g << 8 | b).toString(16).slice(1)}`
 }
 
+
+function formatLink(link: string | null | undefined, itemId: string, label: string): string {
+  if (!link || link === '#' || link === '/') {
+    const cleanLabel = label.toLowerCase()
+      .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+      .replace(/đ/g, 'd').replace(/Đ/g, 'd')
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/^-+|-+$/g, '')
+    return `/${cleanLabel || itemId}`
+  }
+  if (link.startsWith('/') || link.startsWith('http')) return link
+  return `/${link}`
+}
 
 export default function HomePage() {
   const [announcements, setAnnouncements] = useState<Announcement[]>([])
@@ -116,81 +130,7 @@ export default function HomePage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Top Bar */}
-      <div className="text-white text-xs animate-slideDown" style={{ backgroundColor: schoolSettings?.primaryColor || '#1e3a5f' }}>
-        <div className="max-w-7xl mx-auto px-4 py-1.5 flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <span>{dateStr}</span>
-          </div>
-          <div className="flex items-center gap-4">
-            <span className="flex items-center gap-1"><Phone className="w-3 h-3" /> (028) 3842-5904</span>
-            <span className="flex items-center gap-1"><Mail className="w-3 h-3" /> info@truongnguyen.edu.vn</span>
-          </div>
-        </div>
-      </div>
-
-      {/* Header */}
-      <header
-        className="text-white animate-fadeIn"
-        style={{
-          background: `linear-gradient(to right, ${schoolSettings?.primaryColor || '#1e3a5f'}, ${schoolSettings?.primaryColor ? adjustColor(schoolSettings.primaryColor, -20) : '#172e4d'}, ${schoolSettings?.primaryColor || '#1e3a5f'})`
-        }}
-      >
-        <div className="max-w-7xl mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
-            <Link href="/" className="flex items-center gap-4 group">
-              <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300">
-                <span className="font-bold text-xl" style={{ color: schoolSettings?.primaryColor || '#1e3a5f' }}>NT</span>
-              </div>
-              <div>
-                <p className="text-xs opacity-80 tracking-wider uppercase">Cổng thông tin điện tử</p>
-                <h1 className="text-2xl md:text-3xl font-bold tracking-wide group-hover:tracking-wider transition-all duration-300">
-                  {schoolSettings?.schoolName || 'TRƯỜNG THCS NGUYỄN TRÃI'}
-                </h1>
-                <p className="text-xs opacity-80">
-                  {schoolSettings?.schoolAddress || 'Tây Ninh'}
-                </p>
-              </div>
-            </Link>
-            <form action="/search" method="GET" className="hidden md:flex items-center gap-2 bg-white/20 rounded-lg px-3 py-2 hover:bg-white/30 transition-colors">
-              <input
-                type="text"
-                name="q"
-                placeholder="Từ khóa tìm kiếm"
-                className="bg-transparent text-white placeholder-white/70 text-sm outline-none w-48"
-              />
-              <button type="submit">
-                <Search className="w-4 h-4 text-white/80 hover:text-white transition-colors" />
-              </button>
-            </form>
-          </div>
-        </div>
-      </header>
-
-      {/* Navigation - chỉ hiện menu root, không dropdown */}
-      <nav
-        className="border-t shadow-md animate-slideDown"
-        style={{
-          background: `linear-gradient(to right, ${schoolSettings?.primaryColor ? adjustColor(schoolSettings.primaryColor, -30) : '#1e3a5f'}, ${schoolSettings?.primaryColor || '#1e3a5f'})`,
-          borderColor: schoolSettings?.primaryColor ? adjustColor(schoolSettings.primaryColor, -40) : '#172e4d'
-        }}
-      >
-        <div className="max-w-7xl mx-auto px-4">
-          <div className="flex items-center overflow-x-auto">
-            {rootMenuItems.map((item, i) => (
-              <Link
-                key={item.id}
-                href={item.menuType === 'category' ? '#' : item.link}
-                className="flex items-center gap-1.5 px-4 py-3 text-sm font-medium text-white/90 hover:bg-white/10 hover:text-white transition-all duration-200 whitespace-nowrap border-r border-white/20 last:border-r-0"
-                style={{ animationDelay: `${i * 50}ms` }}
-              >
-                <span>{item.icon || '📄'}</span>
-                {item.label}
-              </Link>
-            ))}
-          </div>
-        </div>
-      </nav>
+      <SiteHeader />
 
       {/* Main Content */}
       <div className="max-w-7xl mx-auto px-4 py-6">
@@ -247,7 +187,7 @@ export default function HomePage() {
                           {children.map(child => (
                             <Link
                               key={child.id}
-                              href={child.link}
+                              href={formatLink(child.link, child.id, child.label)}
                               className="flex items-center gap-2 pl-8 pr-4 py-2 text-sm text-gray-600 hover:bg-blue-50 hover:text-blue-700 transition-all duration-150 border-l-2 border-blue-300 ml-4"
                             >
                               <span className="text-sm">{child.icon || '📄'}</span>

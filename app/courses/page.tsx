@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { BookOpen, ChevronRight, Calendar, Eye, FileText, Download } from 'lucide-react'
 import { getPublishedCourses, getCourseById } from '@/app/actions/courses'
 import { Modal } from '@/components/modal'
+import { SiteHeader } from '@/components/site-header'
 
 interface Course {
   id: string
@@ -41,23 +42,7 @@ export default function CoursesPage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <header className="header-bg text-white animate-slideDown">
-        <div className="max-w-7xl mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
-            <Link href="/" className="flex items-center gap-4 group">
-              <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300">
-                <span className="text-blue-700 font-bold text-xl">NT</span>
-              </div>
-              <div>
-                <p className="text-xs opacity-80 tracking-wider uppercase">Cổng thông tin điện tử</p>
-                <h1 className="text-2xl md:text-3xl font-bold tracking-wide group-hover:tracking-wider transition-all duration-300">TRƯỜNG THCS NGUYỄN TRÃI</h1>
-                <p className="text-xs opacity-80">Quận Gò Vấp, TP. Hồ Chí Minh</p>
-              </div>
-            </Link>
-          </div>
-        </div>
-      </header>
+      <SiteHeader />
 
       {/* Main Content */}
       <div className="max-w-7xl mx-auto px-4 py-8">

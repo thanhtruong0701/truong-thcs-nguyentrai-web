@@ -5,6 +5,7 @@ import { useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { Search as SearchIcon, FileText, BookOpen, ChevronRight } from 'lucide-react'
 import { searchContent } from '@/app/actions/search'
+import { SiteHeader } from '@/components/site-header'
 
 interface Announcement {
   id: string
@@ -74,20 +75,7 @@ function SearchContent() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <header className="header-bg text-white">
-        <div className="max-w-7xl mx-auto px-4 py-4">
-          <Link href="/" className="flex items-center gap-4 group">
-            <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center shadow-lg">
-              <span className="text-blue-800 font-bold text-xl">NT</span>
-            </div>
-            <div>
-              <p className="text-xs opacity-80 tracking-wider uppercase">Cổng thông tin điện tử</p>
-              <h1 className="text-2xl md:text-3xl font-bold tracking-wide">TRƯỜNG THCS NGUYỄN TRÃI</h1>
-              <p className="text-xs opacity-80">Quận Gò Vấp, TP. Hồ Chí Minh</p>
-            </div>
-          </Link>
-        </div>
-      </header>
+      <SiteHeader />
 
       <div className="max-w-4xl mx-auto px-4 py-8">
         {/* Search Box */}

@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { getPublishedFileUploads, incrementDownloadCount } from '@/app/actions/files'
 import { ChevronRight, Download, FileText, FileSpreadsheet, FileArchive, File, Search } from 'lucide-react'
+import { SiteHeader } from '@/components/site-header'
 
 interface FileUpload {
   id: string
@@ -76,23 +77,7 @@ export default function TaiNguyenPage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <header className="header-bg text-white">
-        <div className="max-w-7xl mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
-            <Link href="/" className="flex items-center gap-4 group">
-              <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center shadow-lg">
-                <span className="text-blue-700 font-bold text-xl">NT</span>
-              </div>
-              <div>
-                <p className="text-xs opacity-80 tracking-wider uppercase">Cổng thông tin điện tử</p>
-                <h1 className="text-2xl md:text-3xl font-bold tracking-wide">TRƯỜNG THCS NGUYỄN TRÃI</h1>
-                <p className="text-xs opacity-80">Quận Gò Vấp, TP. Hồ Chí Minh</p>
-              </div>
-            </Link>
-          </div>
-        </div>
-      </header>
+      <SiteHeader />
 
       {/* Breadcrumb */}
       <div className="bg-white border-b border-gray-200">

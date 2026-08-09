@@ -5,6 +5,7 @@ import { useParams } from 'next/navigation'
 import Link from 'next/link'
 import { ArrowLeft, Clock, ChevronRight, Download } from 'lucide-react'
 import { getAnnouncementById } from '@/app/actions/announcements'
+import { SiteHeader } from '@/components/site-header'
 
 interface AttachmentFile {
   url: string
@@ -53,19 +54,7 @@ export default function AnnouncementDetailPage() {
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-50">
-        <header className="bg-gradient-to-r from-red-900 via-red-800 to-red-900 text-white">
-          <div className="max-w-7xl mx-auto px-4 py-4">
-            <Link href="/" className="flex items-center gap-4 group">
-              <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center shadow-lg">
-                <span className="text-red-700 font-bold text-xl">NT</span>
-              </div>
-              <div>
-                <p className="text-xs opacity-80 tracking-wider uppercase">Cổng thông tin điện tử</p>
-                <h1 className="text-2xl md:text-3xl font-bold tracking-wide">TRƯỜNG THCS NGUYỄN TRÃI</h1>
-              </div>
-            </Link>
-          </div>
-        </header>
+        <SiteHeader />
         <div className="max-w-4xl mx-auto px-4 py-8">
           <div className="animate-pulse space-y-4">
             <div className="h-6 bg-gray-200 rounded w-3/4" />
@@ -85,19 +74,7 @@ export default function AnnouncementDetailPage() {
   if (error || !announcement) {
     return (
       <div className="min-h-screen bg-gray-50">
-        <header className="bg-gradient-to-r from-red-900 via-red-800 to-red-900 text-white">
-          <div className="max-w-7xl mx-auto px-4 py-4">
-            <Link href="/" className="flex items-center gap-4 group">
-              <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center shadow-lg">
-                <span className="text-red-700 font-bold text-xl">NT</span>
-              </div>
-              <div>
-                <p className="text-xs opacity-80 tracking-wider uppercase">Cổng thông tin điện tử</p>
-                <h1 className="text-2xl md:text-3xl font-bold tracking-wide">TRƯỜNG THCS NGUYỄN TRÃI</h1>
-              </div>
-            </Link>
-          </div>
-        </header>
+        <SiteHeader />
         <div className="max-w-4xl mx-auto px-4 py-8 text-center">
           <div className="bg-white rounded-lg border border-gray-200 p-12">
             <p className="text-gray-500 mb-4">{error || 'Không tìm thấy thông báo'}</p>
@@ -131,23 +108,7 @@ export default function AnnouncementDetailPage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <header className="bg-gradient-to-r from-red-900 via-red-800 to-red-900 text-white">
-        <div className="max-w-7xl mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
-            <Link href="/" className="flex items-center gap-4 group">
-              <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center shadow-lg">
-                <span className="text-red-700 font-bold text-xl">NT</span>
-              </div>
-              <div>
-                <p className="text-xs opacity-80 tracking-wider uppercase">Cổng thông tin điện tử</p>
-                <h1 className="text-2xl md:text-3xl font-bold tracking-wide">TRƯỜNG THCS NGUYỄN TRÃI</h1>
-                <p className="text-xs opacity-80">Quận Gò Vấp, TP. Hồ Chí Minh</p>
-              </div>
-            </Link>
-          </div>
-        </div>
-      </header>
+      <SiteHeader />
 
       {/* Breadcrumb */}
       <div className="bg-white border-b border-gray-200">

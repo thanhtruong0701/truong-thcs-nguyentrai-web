@@ -7,6 +7,8 @@ import { ChevronRight, FileText, Calendar, Download, File, FileSpreadsheet, File
 import { getPagesBySlug } from '@/app/actions/pages'
 import { getPublishedFileUploads, incrementDownloadCount } from '@/app/actions/files'
 
+import { SiteHeader } from '@/components/site-header'
+
 interface MenuItem {
   id: string
   label: string
@@ -29,7 +31,7 @@ interface Attachment {
   name: string
   type: string
   isImage: boolean
-  allowDownload?: boolean  // từ admin - có thể undefined với data cũ → mặc định cho tải
+  allowDownload?: boolean
 }
 
 interface FileUpload {
@@ -119,19 +121,7 @@ export default function CatchAllPage() {
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-50">
-        <header className="bg-gradient-to-r from-red-900 via-red-800 to-red-900 text-white">
-          <div className="max-w-7xl mx-auto px-4 py-4">
-            <Link href="/" className="flex items-center gap-4">
-              <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center shadow-lg">
-                <span className="text-red-700 font-bold text-xl">NT</span>
-              </div>
-              <div>
-                <p className="text-xs opacity-80 tracking-wider uppercase">Cổng thông tin điện tử</p>
-                <h1 className="text-2xl md:text-3xl font-bold tracking-wide">TRƯỜNG THCS NGUYỄN TRÃI</h1>
-              </div>
-            </Link>
-          </div>
-        </header>
+        <SiteHeader />
         <div className="max-w-5xl mx-auto px-4 py-8">
           <div className="animate-pulse space-y-4">
             <div className="h-8 bg-gray-200 rounded w-1/3" />
@@ -149,27 +139,18 @@ export default function CatchAllPage() {
   if (!found || !menuItem) {
     return (
       <div className="min-h-screen bg-gray-50">
-        <header className="bg-gradient-to-r from-red-900 via-red-800 to-red-900 text-white">
-          <div className="max-w-7xl mx-auto px-4 py-4">
-            <Link href="/" className="flex items-center gap-4">
-              <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center shadow-lg">
-                <span className="text-red-700 font-bold text-xl">NT</span>
-              </div>
-              <div>
-                <p className="text-xs opacity-80 tracking-wider uppercase">Cổng thông tin điện tử</p>
-                <h1 className="text-2xl md:text-3xl font-bold tracking-wide">TRƯỜNG THCS NGUYỄN TRÃI</h1>
-              </div>
-            </Link>
-          </div>
-        </header>
+        <SiteHeader />
         <div className="max-w-5xl mx-auto px-4 py-8">
-          <div className="bg-white rounded-lg border border-gray-200 p-12 text-center">
-            <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-              <FileText className="w-8 h-8 text-gray-400" />
+          <div className="bg-white rounded-lg border border-gray-200 p-12 text-center shadow-sm">
+            <div className="w-16 h-16 bg-blue-50 rounded-full flex items-center justify-center mx-auto mb-4">
+              <FileText className="w-8 h-8 text-blue-600" />
             </div>
-            <p className="text-gray-500 mb-4">Trang không tồn tại</p>
-            <Link href="/" className="text-red-600 hover:text-red-700 inline-flex items-center gap-2">
-              Về trang chủ
+            <h2 className="text-xl font-bold text-gray-800 mb-2">Chưa có bài viết cho danh mục này</h2>
+            <p className="text-gray-500 mb-6 max-w-md mx-auto">
+              Danh mục này vừa được tạo trong Admin. Bạn cần vào Admin &gt; **Quản lý Bài viết** (hoặc Trang) để tạo và gán bài viết vào danh mục này.
+            </p>
+            <Link href="/" className="bg-blue-600 text-white px-5 py-2.5 rounded-lg text-sm font-medium hover:bg-blue-700 inline-flex items-center gap-2 transition-colors shadow-sm">
+              Trở về Trang chủ
             </Link>
           </div>
         </div>
@@ -185,20 +166,7 @@ export default function CatchAllPage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <header className="bg-gradient-to-r from-red-900 via-red-800 to-red-900 text-white">
-        <div className="max-w-7xl mx-auto px-4 py-4">
-          <Link href="/" className="flex items-center gap-4 group">
-            <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center shadow-lg">
-              <span className="text-red-700 font-bold text-xl">NT</span>
-            </div>
-            <div>
-              <p className="text-xs opacity-80 tracking-wider uppercase">Cổng thông tin điện tử</p>
-              <h1 className="text-2xl md:text-3xl font-bold tracking-wide">TRƯỜNG THCS NGUYỄN TRÃI</h1>
-              <p className="text-xs opacity-80">Quận Gò Vấp, TP. Hồ Chí Minh</p>
-            </div>
-          </Link>
-        </div>
-      </header>
+      <SiteHeader />
 
       <div className="bg-white border-b border-gray-200">
         <div className="max-w-5xl mx-auto px-4 py-3">
