@@ -222,18 +222,29 @@ export default function HomePage() {
 
           {/* Center Content */}
           <main className="lg:col-span-7">
-            {/* Banner / Slider placeholder */}
-            <div className="bg-gradient-to-r from-blue-600 to-blue-800 rounded-lg p-8 text-white mb-6 relative overflow-hidden group animate-fadeInUp hover:shadow-xl transition-shadow duration-300">
+            {/* Hero Banner trang chủ */}
+            <div
+              className="rounded-lg p-8 text-white mb-6 relative overflow-hidden group animate-fadeInUp hover:shadow-xl transition-shadow duration-300"
+              style={{
+                background: `linear-gradient(to right, ${schoolSettings?.primaryColor || 'var(--primary)'}, ${schoolSettings?.primaryColor ? adjustColor(schoolSettings.primaryColor, -30) : 'var(--primary)'})`
+              }}
+            >
               <div className="absolute inset-0 opacity-10">
                 <div className="absolute -right-20 -top-20 w-64 h-64 bg-white rounded-full group-hover:scale-150 transition-transform duration-700" />
                 <div className="absolute -left-10 -bottom-10 w-48 h-48 bg-white rounded-full group-hover:scale-150 transition-transform duration-700" />
               </div>
               <div className="relative">
-                <p className="text-sm opacity-80 mb-1 animate-slideRight">Quản lý Quận Gò Vấp</p>
-                <h2 className="text-xl md:text-2xl font-bold mb-2 animate-slideRight" style={{ animationDelay: '100ms' }}>Trường THCS Nguyễn Trãi</h2>
-                <p className="text-sm opacity-90 mb-4 animate-slideRight" style={{ animationDelay: '200ms' }}>Nơi ươm mầm tri thức,培养 tài năng tương lai</p>
+                <p className="text-sm opacity-80 mb-1 animate-slideRight">
+                  {schoolSettings?.heroSubtitle || schoolSettings?.schoolManager || 'Đơn vị trực thuộc Phòng GD&ĐT Tây Ninh'}
+                </p>
+                <h2 className="text-xl md:text-2xl font-bold mb-2 animate-slideRight" style={{ animationDelay: '100ms' }}>
+                  {schoolSettings?.schoolName || 'TRƯỜNG THCS NGUYỄN TRÃI'}
+                </h2>
+                <p className="text-sm opacity-90 mb-4 animate-slideRight" style={{ animationDelay: '200ms' }}>
+                  {schoolSettings?.heroSlogan || 'Nơi ươm mầm tri thức, phát triển tài năng tương lai'}
+                </p>
                 <div className="flex gap-3 animate-slideRight" style={{ animationDelay: '300ms' }}>
-                  <Link href="/courses" className="bg-white text-blue-700 px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-50 transition-all duration-200 hover:scale-105 hover:shadow-lg">
+                  <Link href="/courses" className="bg-white text-gray-900 px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-100 transition-all duration-200 hover:scale-105 hover:shadow-lg">
                     Khóa học
                   </Link>
                   <Link href="/contact" className="border border-white/50 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-white/10 transition-all duration-200 hover:scale-105 hover:shadow-lg">
